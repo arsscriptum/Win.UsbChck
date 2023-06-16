@@ -9,9 +9,10 @@ Have a batch file containing the code you want for example:
 
 ```
     SET DRIVE=%1
-	echo SCANNING DRIVE %DRIVE%...
-	C:\Windows\system32\chkdsk.exe %DRIVE%:
+    echo SCANNING DRIVE %DRIVE%...
+    C:\Windows\system32\chkdsk.exe %DRIVE%:
 ```
+Povided script at [this location](https://github.com/arsscriptum/Win.UsbChck/blob/master/scripts/scan.bat)
 
 Run this:
 
