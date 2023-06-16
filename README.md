@@ -19,3 +19,6 @@ Run this:
     c:\TOOLS>usbchck.exe c:\TOOLS\scan.bat
 ```
 
+<p align="center">
+  <img src="demo.gif">
+</p>

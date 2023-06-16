@@ -25,7 +25,7 @@ goto :eof
 :checkPermission
 	openfiles>nul 2>&1
 
-	if %errorlevel% EQU 0 goto terms
+	if %errorlevel% EQU 0 goto doScan
 
 	call :print Checking for Administrator elevation.
 
