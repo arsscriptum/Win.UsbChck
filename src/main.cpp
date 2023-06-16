@@ -39,30 +39,19 @@ void getUSBStorageDeviceList(wchar_t drive[]) {
     {
         UINT nDriveType = GetDriveType(szSingleDrive);
 
-        //  printf("\nFUNC: getRemovableDisk, Drive Name%d= %s", ++count, szSingleDrive);
-
-        if (nDriveType == DRIVE_UNKNOWN) {
-            //  cout << "\nDrive type : Unknown: The drive type cannot be determined." << endl;
-        }
-        else if (nDriveType == DRIVE_NO_ROOT_DIR) {
-            //  cout << "\nDrive type : Invalid Root Directory Media: The root path is invalid." << endl;
-        }
-        else if (nDriveType == DRIVE_REMOVABLE) {
-            //  cout << "\nDrive type :  Removable Media:" << endl;
-            wchar_t letter = szSingleDrive[0];
-            drive[letter - 65] = letter;
-        }
-        else if (nDriveType == DRIVE_FIXED) {
-            //cout << "\nDrive type : Fixed Media: " << endl;
-        }
-        else if (nDriveType == DRIVE_REMOTE) {
-            //cout << "\nDrive type : Remote Media: The drive is a remote (network) drive.." << endl;
-        }
-        else if (nDriveType == DRIVE_CDROM) {
-            //cout << "\nDrive type : CD ROM:   The drive is a CD-ROM drive." << endl;
-        }
-        else if (nDriveType == DRIVE_RAMDISK) {
-            //cout << "\nDrive type : RAM Disk: The drive is a RAM disk." << endl;
+        switch (nDriveType) {
+            case DRIVE_REMOVABLE: {
+                //  cout << "\nDrive type :  Removable Media:" << endl;
+                wchar_t letter = szSingleDrive[0];
+                drive[letter - 65] = letter;
+            }
+            case DRIVE_UNKNOWN:
+            case DRIVE_NO_ROOT_DIR:
+            case DRIVE_FIXED:
+            case DRIVE_REMOTE:
+            case DRIVE_CDROM:
+            case DRIVE_RAMDISK: {
+            }
         }
 
         szSingleDrive += wcslen(szSingleDrive) + 1; // next drive 
@@ -70,7 +59,7 @@ void getUSBStorageDeviceList(wchar_t drive[]) {
 }
 
 void usage() {
-    printf("usbchck v1.0 - Guillaume Plante\n");
+    printf("usbchck v1.0\n");
     printf("usbchck: monitor usb devices, run a script on change\n");
     printf("example:\n");
     printf("usbchck.exe c:\\scripts\\scan.bat\n");
@@ -78,7 +67,7 @@ void usage() {
 
 
 void title(char *scriptPath) {
-    printf("usbchck v1.0 - Guillaume Plante\n");
+    printf("usbchck v1.0\n");
     printf("usbchck: will run script \"%s\" when new usb drive are connected...\n\n", scriptPath);
 }
 
@@ -90,7 +79,7 @@ int main(int argc, char *argv[]) {
         return -1;
     }
     char scriptPath[256];
-    strcpy(scriptPath, argv[1]);
+    strncpy(scriptPath, argv[1],255);
     title(scriptPath);
     int count = 0;
     for (int i = 0; i < MAX_LETTER; i++) {
@@ -111,9 +100,9 @@ int main(int argc, char *argv[]) {
             // check for new drive
             if ((NEW_DRIVE_LIST[i] >= 65 && NEW_DRIVE_LIST[i] <= 89) && (PREV_DRIVE_LIST[i] == '0')) {
 
-                printf("\n[+] New Device Inserted%d : %c\n\n", count++, NEW_DRIVE_LIST[i]);
+                printf("\n[+] New Device Inserted[%d] : %c\n\n", count++, NEW_DRIVE_LIST[i]);
                 char newCmd[256];
-                sprintf(newCmd, "%s %c", scriptPath,NEW_DRIVE_LIST[i]);
+                snprintf(newCmd, 255, "%s %c", scriptPath,NEW_DRIVE_LIST[i]);
                 printf("[+] Running \"%s\"\n", newCmd);
                 system(newCmd);
                 PREV_DRIVE_LIST[i] = NEW_DRIVE_LIST[i];
@@ -129,7 +118,7 @@ int main(int argc, char *argv[]) {
         for (int i = 0; i < MAX_LETTER; i++) {
             // check for removed drive
             if ((PREV_DRIVE_LIST[i] >= 65 && PREV_DRIVE_LIST[i] <= 89) && (NEW_DRIVE_LIST[i] == '0')) {
-                printf("\n[-] Device Removed%d : %c\n\n", count++, PREV_DRIVE_LIST[i]);
+                printf("\n[-] Device Removed[%d] : %c\n\n", count++, PREV_DRIVE_LIST[i]);
                 PREV_DRIVE_LIST[i] = NEW_DRIVE_LIST[i];
             }
         }
